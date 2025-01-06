@@ -1,0 +1,33 @@
+name: Deploy WordPress
+
+on:
+  push:
+    branches: [ "main" ] # Deploy on pushes to the "main" branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to server
+        uses: appleboy/ssh-action@v0.1.1
+        with:
+          host: 18.222.233.125
+          username: ubuntu 
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Production
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "wo site update 18.222.233.125 --force" 
+
+      - name: Clear WordPress Cache (if applicable)
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "wp cache flush" 
+
+      - name: Check Deployment Status
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "wo site status 18.222.233.125" 
+          # Optionally, you can add checks for successful deployment and send notifications.
