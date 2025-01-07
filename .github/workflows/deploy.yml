@@ -2,16 +2,40 @@ name: Deploy WordPress
 
 on:
   push:
-    branches: [ "main" ] # Deploy on pushes to the "main" branch
+    branches: [ "main" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-2 # e.g., us-east-1
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_INSTANCE_SG_ID: sg-00a2f6fb60a283303
 
     steps:
+      - name: Get Runner IP address
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Whitelist Runner IP address
+        run: |
+          aws ec2 authorize-security-group-ingress \
+            --group-id ${{ env.AWS_INSTANCE_SG_ID }} \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
       - name: Test SSH Connection
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "echo 'SSH connection successful!'"
+          ssh -o StrictHostKeyChecking=no ubuntu@<your_ec2_instance_public_ip> "echo 'SSH connection successful!'"
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,19 +43,22 @@ jobs:
       - name: Login to server
         uses: appleboy/ssh-action@v0.1.1
         with:
-          host: 18.222.233.125
-          username: ubuntu 
+          host: <your_ec2_instance_public_ip>
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to Production
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "wo site update 18.222.233.125 --force" 
+          wo site update 18.222.233.125 --force
 
-      - name: Clear WordPress Cache (if applicable)
+      - name: Clear WordPress Cache
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "wp cache flush" 
+          wp cache flush
 
-      - name: Check Deployment Status
+      - name: Revoke Runner IP address
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "wo site status 18.222.233.125" 
-          # Optionally, you can add checks for successful deployment and send notifications.
+          aws ec2 revoke-security-group-ingress \
+            --group-id ${{ env.AWS_INSTANCE_SG_ID }} \
+            --protocol tcp \
+            --port 22 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
