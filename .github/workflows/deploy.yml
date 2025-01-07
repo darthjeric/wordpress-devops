@@ -59,13 +59,6 @@ jobs:
         run: |
           echo "Deploy to production step"
           touch /tmp/helloWorld.txt
-
-      - name: Run wo and wp commands
-        run: |
-          export PATH=$PATH:/usr/local/bin
-          echo "Starting update..."
-          /usr/local/bin/wo site info 18.222.233.125
-
           
       - name: Debug Info
         run: |
