@@ -57,17 +57,17 @@ jobs:
 
       - name: Deploy to Production
         run: |
-          touch /tmp/deployed_by_github_actions
-      
-      - name: Clear wordpress cache_SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: 18.222.233.125
-          username: ubuntu  # or ec2-user, depending on your AMI 
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            wp cache flush
+          touch /tmp/helloWorld.txt
+
+      - name: Run wo and wp commands
+        run: |
+          export PATH=$PATH:/usr/local/bin
+          echo "Starting update..."
+          wo site update 18.222.233.125 --force
+          echo "Update done!"
+          echo "Clearing wp cache..."
+          wp cache flush
+          echo "WP cache flushed!"
 
       - name: Revoke Runner IP address
         run: |
