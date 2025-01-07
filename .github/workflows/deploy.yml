@@ -57,6 +57,7 @@ jobs:
 
       - name: Deploy to Production
         run: |
+          echo "Deploy to production step"
           touch /tmp/helloWorld.txt
 
       - name: Run wo and wp commands
@@ -64,6 +65,14 @@ jobs:
           export PATH=$PATH:/usr/local/bin
           echo "Starting update..."
           /usr/local/bin/wo site info 18.222.233.125
+
+          
+      - name: Debug Info
+        run: |
+          whoami
+          pwd
+          env
+          ls -la /usr/local/bin
 
       - name: Revoke Runner IP address
         run: |
