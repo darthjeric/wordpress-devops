@@ -38,13 +38,13 @@ jobs:
         with:
           host: 18.222.233.125
           username: ubuntu  # or ec2-user, depending on your AMI
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
             echo "Connection successful"
             whoami
             pwd
-            
+
       - name: Test SSH Connection
         run: |
           ssh -o StrictHostKeyChecking=no -v ubuntu@18.222.233.125 "echo 'SSH connection successful!'"
