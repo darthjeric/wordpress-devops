@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Test SSH Connection
         run: |
-          ssh -p 22222 -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "echo 'SSH connection successful!'"
+          ssh -v -o StrictHostKeyChecking=no ubuntu@18.222.233.125 "echo 'SSH connection successful!'"
 
       - name: Checkout code
         uses: actions/checkout@v3
