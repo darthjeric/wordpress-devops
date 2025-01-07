@@ -61,7 +61,7 @@ jobs:
 
       - name: Clear WordPress Cache
         run: |
-          wp cache flush
+          ssh ubuntu@18.222.233.125 'wp cache flush'
 
       - name: Revoke Runner IP address
         run: |
