@@ -2,7 +2,7 @@ name: Deploy WordPress
 
 on:
   push:
-    branches: [ "main" ] # Deploy on pushes to the "main" branch     
+    branches: [ "main" ] # Deploy on pushes to the "main" branch
 
 jobs:
   deploy:
