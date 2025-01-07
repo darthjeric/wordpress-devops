@@ -57,7 +57,7 @@ jobs:
 
       - name: Deploy to Production
         run: |
-          sudo -u ubuntu /usr/local/bin/wo site update 18.222.233.125 --force
+          touch /tmp/deployed_by_github_actions
 
       - name: Clear WordPress Cache
         run: |
