@@ -63,7 +63,7 @@ jobs:
         run: |
           export PATH=$PATH:/usr/local/bin
           echo "Starting update..."
-          sudo -u ubuntu /usr/local/bin/wo site info 18.222.233.125
+          /usr/local/bin/wo site info 18.222.233.125
 
       - name: Revoke Runner IP address
         run: |
