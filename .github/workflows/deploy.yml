@@ -37,7 +37,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 18.222.233.125
-          username: ubuntu  # or ec2-user, depending on your AMI
+          username: ubuntu  # or ec2-user, depending on your AMI 
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
